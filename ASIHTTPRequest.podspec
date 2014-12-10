@@ -19,6 +19,7 @@ Pod::Spec.new do |s|
   }
 
   s.source_files = 'Classes'
+  s.requires_arc = false
 
   s.ios.dependency 'Reachability' #, '~> 2.0', '>= 2.0.4'
   s.ios.frameworks   = 'MobileCoreServices', 'CFNetwork', 'CoreGraphics'
