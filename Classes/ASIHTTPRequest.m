@@ -3459,6 +3459,27 @@ static NSOperationQueue *sharedQueue = nil;
 			}
 			[self removeTemporaryDownloadFile];
 
+		} else if (1) {
+			// from James Jeong ( https://github.com/hs1512/ASIHTTPRequest/commit/884786890f31df21d5cf996ad866ae0a554af36d )
+			if (![[self temporaryFileDownloadPath] isEqualToString:[self downloadDestinationPath]]) {
+				//Remove any file at the destination path
+				NSError *moveError = nil;
+				if (![[self class] removeFileAtPath:[self downloadDestinationPath] error:&moveError]) {
+					fileError = moveError;
+
+				}
+
+				//Move the temporary file to the destination path
+				if (!fileError) {
+					[[[[NSFileManager alloc] init] autorelease] moveItemAtPath:[self temporaryFileDownloadPath] toPath:[self downloadDestinationPath] error:&moveError];
+					if (moveError) {
+						fileError = [NSError errorWithDomain:NetworkRequestErrorDomain code:ASIFileManagementError userInfo:[NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"Failed to move file from '%@' to '%@'",[self temporaryFileDownloadPath],[self downloadDestinationPath]],NSLocalizedDescriptionKey,moveError,NSUnderlyingErrorKey,nil]];
+					}
+					//[self setTemporaryFileDownloadPath:nil];
+				}
+			}
+			[self setTemporaryFileDownloadPath:nil];
+
 		} else {
 	
 			//Remove any file at the destination path
